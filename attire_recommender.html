@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pan-Indian Attire Recommender System</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            min-height: 100vh;
+        }
+        .container-card {
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #1e88e5 100%);
+        }
+        .btn-recommend {
+            background-color: #FF5722; /* Festive Orange */
+            transition: background-color 0.3s;
+        }
+        .btn-recommend:hover {
+            background-color: #e64a19;
+        }
+        .result-box {
+            min-height: 4rem;
+            border-left: 4px solid #4CAF50;
+        }
+        .reasoning-box {
+            min-height: 6rem;
+            border-left: 4px solid #1e88e5;
+        }
+        /* Custom scrollbar for better appearance */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #90a4ae;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex justify-center items-start">
+
+    <div class="container-card w-full max-w-4xl rounded-xl p-6 md:p-10">
+        
+        <!-- Header -->
+        <div class="gradient-header p-6 rounded-lg text-white mb-8 text-center">
+            <h1 class="text-3xl font-bold mb-1 sm:text-4xl">
+                &#x1F455; Attire Recommender System
+            </h1>
+            <p class="text-sm sm:text-lg opacity-90">Culturally Appropriate Pan-Indian Men's Wear</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Input Form -->
+            <div class="input-section">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Your Context</h2>
+                
+                <div class="mb-5">
+                    <label for="scenario" class="block text-sm font-medium text-gray-700 mb-1">Scenario / Event (e.g., Diwali, Office Formal, Morning Yoga)</label>
+                    <input type="text" id="scenario" value="Ugadi Festival" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150" placeholder="e.g., Ugadi Festival">
+                </div>
+
+                <div class="mb-5">
+                    <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State / Region</label>
+                    <select id="state" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150">
+                        <option value="Telugu">Telugu (AP/Telangana)</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Bengal">Bengal/Odisha</option>
+                        <option value="Pan-India">Pan-India (General)</option>
+                    </select>
+                </div>
+
+                <div class="mb-5">
+                    <label for="month" class="block text-sm font-medium text-gray-700 mb-1">Month (for Seasonal Context)</label>
+                    <input type="text" id="month" value="March" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150" placeholder="e.g., March">
+                </div>
+                
+                <button id="recommend-btn" class="btn-recommend w-full text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl mt-4">
+                    Get My Attire Recommendation
+                </button>
+            </div>
+
+            <!-- Output Display -->
+            <div class="output-section">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Recommendation</h2>
+                
+                <!-- Image Output -->
+                <div class="mb-6 text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Visual Reference</h3>
+                    <img id="attire-image" src="https://placehold.co/400x300/e2e8f0/64748b?text=Select+Outfit" alt="Attire Visual Reference" class="w-full max-w-sm mx-auto rounded-lg shadow-xl border border-gray-200 transition duration-300">
+                </div>
+
+                <!-- Attire Result -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        Recommended Attire
+                    </h3>
+                    <div id="attire-result" class="result-box p-4 bg-green-50 rounded-lg text-lg font-medium text-green-800 transition duration-150">
+                        Enter your details to find your perfect outfit.
+                    </div>
+                </div>
+
+                <!-- Reasoning Result -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2 flex items-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                           <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM6 11a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zM4 15a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" />
+                         </svg>
+                        Cultural & Practical Reasoning
+                    </h3>
+                    <div id="reasoning-result" class="reasoning-box p-4 bg-blue-50 rounded-lg text-gray-700 text-sm transition duration-150">
+                        The explanation will highlight cultural significance and comfort factors.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // Mapping specific recommendation keys to descriptive placeholder image URLs
+        const attireImageMap = {
+            "Telugu Formal": "https://placehold.co/400x300/003366/ffffff?text=White+Panche+%26+Angavastram",
+            "Festive Kurta Set": "https://placehold.co/400x300/8B0000/ffffff?text=Silk+Kurta+%26+Nehru+Jacket",
+            "South Casual Kurta": "https://placehold.co/400x300/388e3c/ffffff?text=Lungi+%26+Kurta",
+            "Kerala Mundu Set": "https://placehold.co/400x300/FFD700/000000?text=Kerala+Mundu+Set",
+            "Bengali Dhoti Kurta": "https://placehold.co/400x300/ff7043/ffffff?text=Dhoti+%26+Punjabi+Kurta",
+            "Office Formal": "https://placehold.co/400x300/455a64/ffffff?text=Formal+Suit+%26+Tie",
+            "Office Casual": "https://placehold.co/400x300/7cb342/ffffff?text=Cotton+Kurta+%26+Pyjama",
+            "Active Wear": "https://placehold.co/400x300/5e35b1/ffffff?text=Pajama+%26+Vest",
+            "Sleep Wear": "https://placehold.co/400x300/26c6da/ffffff?text=Loose+Nightwear",
+            "Default": "https://placehold.co/400x300/e2e8f0/64748b?text=General+Traditional+Wear"
+        };
+        
+        // CORE JS LOGIC - Simplified Decision Tree Model
+        function recommendAttire(scenario, state, month) {
+            scenario = scenario.toLowerCase().trim();
+            state = state.toLowerCase().trim();
+            month = month.toLowerCase().trim();
+
+            let result = { 
+                attire: "Traditional Kurta-Pyjama (neutral color) or Formal Shirt and Trousers.", 
+                reasoning: "General-purpose appropriate wear when specific context is unclear. Please be more specific!",
+                imageKey: "Default"
+            };
+
+            // --- Rule 1: Festival Rules (High Priority) ---
+            if (scenario.includes("ugadi") && state.includes("telugu")) {
+                result = {
+                    attire: "White Panche (Dhoti), White/Light-Colored Silk Shirt, and Angavastram (shoulder cloth).",
+                    reasoning: "Telugu New Year. White symbolizes purity and tradition. Panche and Angavastram are essential for formal rituals.",
+                    imageKey: "Telugu Formal"
+                };
+            } else if (scenario.includes("diwali") || scenario.includes("deepavali")) {
+                if (state.includes("maharashtra") || state.includes("pan-india")) {
+                    result = {
+                        attire: "Silk Kurta with Churidar or Dhoti, often paired with an embroidered Nehru Jacket.",
+                        reasoning: "Universal festival of light. The attire is elegant, rich in color, and traditionally worn for Lakshmi Puja and social gatherings.",
+                        imageKey: "Festive Kurta Set"
+                    };
+                }
+            } else if (scenario.includes("sankranti") || scenario.includes("pongal")) {
+                 if (state.includes("telugu")) {
+                    result = {
+                        attire: "White or colored Panche/Lungi with a full-sleeve Kurta.",
+                        reasoning: "Harvest festival. The dress is traditional, comfortable, and warm for the winter month, often worn for kite flying and family meals.",
+                        imageKey: "South Casual Kurta"
+                    };
+                }
+            } else if (scenario.includes("onam") && state.includes("kerala")) {
+                result = {
+                    attire: "Cream/Gold-bordered Mundu (dhoti) with a plain white Jubba (kurta) or shirt.",
+                    reasoning: "Harvest festival of Kerala. Represents simplicity, tradition, and purity. The gold border signifies prosperity.",
+                    imageKey: "Kerala Mundu Set"
+                };
+            } else if (scenario.includes("durga puja") && state.includes("bengal")) {
+                result = {
+                    attire: "Dhoti (white or off-white) and a traditional Punjabi kurta (often silk or cotton).",
+                    reasoning: "The classic attire for Puja Pandal visits. Dhoti provides the traditional formal look, paired with comfortable kurta.",
+                    imageKey: "Bengali Dhoti Kurta"
+                };
+            }
+
+            // --- Rule 2: Daily Life Rules ---
+            else if (scenario.includes("office")) {
+                if (scenario.includes("formal")) {
+                    result = {
+                        attire: "Formal Shirt, Trousers, and Blazer (optional).",
+                        reasoning: "Professional and standard pan-Indian business attire, projecting a neat, competent image.",
+                        imageKey: "Office Formal"
+                    };
+                } else {
+                    result = {
+                        attire: "Cotton Kurta (light color) and simple Pyjama or Trousers.",
+                        reasoning: "Smart casual, comfortable, and respectful for routine office environments, especially in warmer months.",
+                        imageKey: "Office Casual"
+                    };
+                }
+            } else if (scenario.includes("yoga") || scenario.includes("exercise") || scenario.includes("morning routines")) {
+                result = {
+                    attire: "Cotton Drawstring Pajama or Track Pants and a loose T-shirt or Vest.",
+                    reasoning: "Focus on comfort and freedom of movement. Breathable cotton is ideal for climate and physical activity.",
+                    imageKey: "Active Wear"
+                };
+            } else if (scenario.includes("sleepwear") || scenario.includes("night")) {
+                result = {
+                    attire: "Loose Cotton Pajamas and Kurta (or a simple T-shirt).",
+                    reasoning: "Ensures maximum comfort and breathability for a good night's sleep.",
+                    imageKey: "Sleep Wear"
+                };
+            }
+
+            return result;
+        }
+
+        // UI Interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const recommendBtn = document.getElementById('recommend-btn');
+            const scenarioInput = document.getElementById('scenario');
+            const stateSelect = document.getElementById('state');
+            const monthInput = document.getElementById('month');
+            const attireResult = document.getElementById('attire-result');
+            const reasoningResult = document.getElementById('reasoning-result');
+            const attireImage = document.getElementById('attire-image');
+
+            recommendBtn.addEventListener('click', () => {
+                const scenario = scenarioInput.value;
+                const state = stateSelect.value;
+                const month = monthInput.value;
+
+                if (!scenario || !state || !month) {
+                    attireResult.innerHTML = `<p class="text-red-600 font-bold">Please fill in all input fields to get a recommendation.</p>`;
+                    reasoningResult.innerHTML = `<p>Missing required context.</p>`;
+                    attireImage.src = attireImageMap["Default"]; // Reset image on error
+                    return;
+                }
+
+                const recommendation = recommendAttire(scenario, state, month);
+                
+                // Get image URL using the key, defaulting if the key isn't found
+                const imageUrl = attireImageMap[recommendation.imageKey] || attireImageMap["Default"];
+
+                // Update UI with recommendation and image
+                attireResult.innerHTML = `<p class="font-bold">${recommendation.attire}</p>`;
+                reasoningResult.innerHTML = `<p>${recommendation.reasoning}</p>`;
+                attireImage.src = imageUrl;
+            });
+        });
+    </script>
+</body>
+</html>
